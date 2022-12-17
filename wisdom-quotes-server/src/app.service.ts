@@ -5,26 +5,38 @@ import * as cheerio from 'cheerio';
 @Injectable()
 export class AppService {
   getHello(): any {
-    const scrapingResult = {};
+    const scrapingResult = [];
+    const scrapingObj = {};
 
-    request('https://twitter.com/CodeWisdom', (error, response, html) => {
-      const $ = cheerio.load(html);
-      const bodyList = $(
-        '.css-901oao .css-16my406 .r-poiln3 .r-bcqeeo .r-qvutc0',
-      ).map((i, element) => {
-        console.log(`TCL ~ [aprp.service.ts] ~ line ~ 30 ~ element`, element);
-      });
-    });
-
-    // request("https://finance.naver.com/marketindex/exchangeDailyQuote.nhn", function (err, res, body) {
-    //   const $ = cheerio.load(body);
-    //   const bodyList = $(".tbl_exchange tbody tr").map(function (i, element) {
-    //       scrapingResult['date'] = String($(element).find('td:nth-of-type(1)').text());
-    //       scrapingResult['the_basic_rate'] =  String($(element).find('td:nth-of-type(2)').text());
-    //       scrapingResult['buy'] =  String($(element).find('td:nth-of-type(4)').text());
-    //       scrapingResult['sell'] =  String($(element).find('td:nth-of-type(5)').text());
-    //       console.log(scrapingResult)
-    //   });
-    // });
+    request(
+      'https://dzone.com/articles/best-programming-jokes-amp-quotes',
+      (error, response, html) => {
+        const cheerioAPI = cheerio.load(html);
+        // body 값을 가져온다.
+        const content = cheerioAPI('div[class=content-html]');
+        content.find('ol li em').map((i, element) => {
+          const text = cheerioAPI(element).text();
+          console.log(`TCL ~ [app.service.ts] ~ line ~ 18 ~ text`, text);
+          console.log(
+            `TCL ~ [app.service.ts] ~ line ~ 20 ~ text.includes('–')`,
+            text.includes('–'),
+          );
+          if (text.includes('–')) {
+            const quoteArr = text.split('–');
+            scrapingObj['quotes'] = quoteArr[0]
+              .replace('“', '')
+              .replace('”', '')
+              .trim();
+            scrapingObj['authors'] = quoteArr[1].trim();
+            scrapingResult.push(scrapingObj);
+          }
+        });
+        
+        console.log(
+          `TCL ~ [app.service.ts] ~ line ~ 28 ~ scrapingResult`,
+          scrapingResult,
+        );
+      },
+    );
   }
 }
