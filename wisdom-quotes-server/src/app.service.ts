@@ -16,11 +16,6 @@ export class AppService {
         const content = cheerioAPI('div[class=content-html]');
         content.find('ol li em').map((i, element) => {
           const text = cheerioAPI(element).text();
-          console.log(`TCL ~ [app.service.ts] ~ line ~ 18 ~ text`, text);
-          console.log(
-            `TCL ~ [app.service.ts] ~ line ~ 20 ~ text.includes('–')`,
-            text.includes('–'),
-          );
           if (text.includes('–')) {
             const quoteArr = text.split('–');
             scrapingObj['quotes'] = quoteArr[0]
