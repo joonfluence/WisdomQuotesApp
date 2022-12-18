@@ -6,7 +6,7 @@
     "port": 3306,
     "username": "root",
     "password": "!@#gmlfkr7236",
-    "database": "",
+    "database": "WisdomQuotesApp",
     "synchronize": false,
     "entities": ["entities/*.js"]
   }
