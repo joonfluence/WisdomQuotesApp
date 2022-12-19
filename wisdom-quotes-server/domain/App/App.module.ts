@@ -17,24 +17,36 @@ import { AuthorService } from 'domain/Author/Author.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: '127.0.0.1',
-      port: 3306,
-      username: 'root',
-      database: 'WisdomQuotesApp',
-      password: '!@#gmlfkr7236',
-      entities: [EImage, Quote, QuoteAuthor, QuoteAuthorBook, QuoteAuthorMajor],
-      synchronize: false,
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
       envFilePath:
         process.env.NODE_ENV === 'development' ? '.env.dev' : '.env.test',
     }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: function (configService: ConfigService) {
+        return {
+          type: 'mysql',
+          host: configService.get('database.host'),
+          port: +configService.get('database.port'),
+          username: configService.get('database.username'),
+          password: configService.get('database.password'),
+          database: configService.get('database.name'),
+          entities: [
+            EImage,
+            Quote,
+            QuoteAuthor,
+            QuoteAuthorBook,
+            QuoteAuthorMajor,
+          ],
+          synchronize: true,
+        };
+      },
+      inject: [ConfigService],
+    }),
     QuoteModule,
-    AuthorModule
+    AuthorModule,
   ],
   controllers: [AppController],
   providers: [AppService, QuoteService, AuthorService],
